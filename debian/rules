@@ -1,0 +1,62 @@
+#!/usr/bin/make -f
+
+# FIXME: support of DEB_BUILD_OPTIONS nocheck and nostrip
+
+JAVA_DIR = usr/share/java
+DOC_DIR = usr/share/doc/libjnr-posix-java-doc
+PKG_BUILDDIR = debian/libjnr-posix-java
+PKG_DOC_BUILDDIR = debian/libjnr-posix-java-doc
+
+MVN = mvn -s /etc/maven2/settings-debian.xml
+
+
+build: build-stamp
+build-stamp:
+	dh_testdir
+
+	$(MVN) verify
+	$(MVN) javadoc:javadoc
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+
+	rm -f build-stamp
+	$(MVN) clean
+	rm -rf debian/.mh/
+
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+
+	dh_installdirs -p libjnr-posix-java $(JAVA_DIR)
+
+	mh_installjar -plibjnr-posix-java --java-lib --usj-name=jnr-posix pom.xml target/jnr-posix-1.1.4.jar
+	mh_installpom -plibjnr-posix-java pom.xml
+
+	dh_installdirs -p libjnr-posix-java-doc $(DOC_DIR)
+	mv target/site/apidocs  $(PKG_DOC_BUILDDIR)/$(DOC_DIR)/javadoc
+
+
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs --indep
+	dh_installdocs --indep
+	dh_compress --indep
+	dh_fixperms --indep
+	dh_installdeb --indep
+	dh_gencontrol --indep
+	dh_md5sums --indep
+	dh_builddeb --indep
+
+binary-arch:
+
+binary: binary-indep binary-arch
+
+
+.PHONY: build install clean binary-indep binary

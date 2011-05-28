@@ -1,0 +1,33 @@
+Source: libjnr-posix-java
+Section: java
+Priority: optional
+Maintainer: Nicolas Duboc <nduboc@debian.org>
+Build-Depends: debhelper (>> 7.0.0), maven2, maven-debian-helper,
+  libmaven-clean-plugin-java
+Build-Depends-Indep: default-jdk, maven-repo-helper, libmaven-resources-plugin-java,
+  libmaven-compiler-plugin-java, libmaven-jar-plugin-java, libmaven-site-plugin-java,
+  libsurefire-java, libmaven-javadoc-plugin-java,
+  libjaffl-java, libconstantine-java (>= 0.7-3)
+Standards-Version: 3.9.2
+Homepage: https://github.com/wmeissner/jnr-posix
+
+Package: libjnr-posix-java
+Architecture: all
+Section: java
+Depends: ${misc:Depends}, default-jre-headless | java5-runtime-headless, libjaffl-java, libconstantine-java (>= 0.7-3)
+Description: basic POSIX-like functions for Java
+ This package is a Java library providing access to various
+ POSIX functions like chmod(2), link(2) or getuid(2) through
+ dynamic loading of native libraries with JNA.
+
+Package: libjnr-posix-java-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}
+Recommends: w3m | www-browser
+Suggests: libjnr-posix-java
+Description: Java JNR-POSIX library API documentation
+ This package includes the development documentation for the
+ JNR-POSIX library which provides access to various POSIX
+ functions like chmod(2), link(2) or getuid(2) through
+ dynamic loading of native libraries with JNA.

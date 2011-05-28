@@ -1,0 +1,10 @@
+libjnr-posix-java (1.1.4~git1.8aa26268b-1) unstable; urgency=low
+
+  * This package is a fork of the Debian libjna-posix-java package for
+    renaming purpose.
+  * Packaging upstream git commit (8aa26268b), tentative version 1.1.4.
+  * Provides maven artifacts in Debian local repository (closes: #620044)
+  * Binary package depends on the headless version of the Java runtime.
+  * Bumped Debian policy compliance to 3.9.2 (nothing to do)
+
+ -- Nicolas Duboc <nduboc@debian.org>  Sat, 28 May 2011 18:20:50 +0200

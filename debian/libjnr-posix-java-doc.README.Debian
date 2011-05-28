@@ -1,0 +1,15 @@
+Debian package of the JNR-POSIX library documentation
+-----------------------------------------------------
+
+ This package contains the documentation for the JNR-POSIX Java
+library which provides access to various POSIX functions like
+chmod(2), link(2) or getuid(2) through dynamic loading of native
+libraries with JNA.
+
+ API documentation (javadoc) is available in directory
+/usr/share/doc/libjnr-posix-java-doc/javadoc .
+
+ The library itself is provided by the libjnr-posix-java package.
+
+-- 
+Nicolas Duboc <nduboc@debian.org>
