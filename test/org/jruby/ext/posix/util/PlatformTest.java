@@ -11,8 +11,8 @@
  * implied. See the License for the specific language governing
  * rights and limitations under the License.
  *
- * 
- *  
+ *
+ *
  * Alternatively, the contents of this file may be used under the terms of
  * either of the GNU General Public License Version 2 or later (the "GPL"),
  * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
@@ -28,18 +28,31 @@
 /**
  * $Id: $
  */
+package org.jruby.ext.posix.util;
 
-package org.jruby.ext.posix;
+import junit.framework.TestCase;
 
-import com.kenai.jaffl.struct.Struct;
-
-/**
- *
+/*
+ * Admittedly, there is a lot of cyclomatic complexity and system-dependent
+ * testing going on here.  At least it's in one place.
  */
-public class HeapStruct extends Struct {
-    protected class Int16 extends Signed16 { }
-    protected class Int32 extends Signed32 {}
-    protected class UInt32 extends Unsigned32 {}
-    protected class Int64 extends Signed64 {}
-    protected class Long extends SignedLong { }
+
+public class PlatformTest extends TestCase {
+
+    public void testBitLengths()  {
+        assertTrue("Not 32 or 64-bit platform?", Platform.IS_32_BIT ^ Platform.IS_64_BIT);
+    }
+
+    public void testEnvCommand()  {
+        String command =Platform.envCommand();
+        if (Platform.IS_WINDOWS_9X)  {
+            assertEquals("Fails on Windows 95/98", "command.com /c set", command);
+        }
+        if (Platform.IS_WINDOWS & !Platform.IS_WINDOWS_9X)  {
+            assertEquals("Fails on Windows other than 95/98", "cmd.exe /c set", command);
+        }
+        if (!Platform.IS_WINDOWS)  {
+            assertEquals("Fails on Non-Windows platform", "env", command);
+        }
+    }
 }

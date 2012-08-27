@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Map;
 import org.jruby.ext.posix.util.Platform;
 
 final class JavaPOSIX implements POSIX {
@@ -30,6 +31,30 @@ final class JavaPOSIX implements POSIX {
 
     public int chown(String filename, int user, int group) {
         return helper.chown(filename, user, group);
+    }
+
+    public int exec(String path, String... argv) {
+        handler.unimplementedError("No exec in Java (yet)");
+        
+        return -1;
+    }
+
+    public int exec(String path, String[] argv, String[] envp) {
+        handler.unimplementedError("No exec in Java (yet)");
+        
+        return -1;
+    }
+    
+    public int execv(String path, String[] argv) {
+        handler.unimplementedError("No execv in Java (yet)");
+        
+        return -1;
+    }
+    
+    public int execve(String path, String[] argv, String[] envp) {
+        handler.unimplementedError("No execve in Java (yet)");
+        
+        return -1;
     }
     
     public FileStat fstat(FileDescriptor descriptor) {
@@ -112,6 +137,11 @@ final class JavaPOSIX implements POSIX {
     public int endgrent() {
         return unimplementedInt("endgrent");
     }
+    
+    // @see setenv for more on the environment methods
+    public String getenv(String envName) {
+        return helper.getEnv().get(envName);
+    }
 
     public int getuid() {
         return LoginInfo.UID;
@@ -166,6 +196,26 @@ final class JavaPOSIX implements POSIX {
         buffer.limit(result);
         return Charset.forName("ASCII").decode(buffer).toString();
     }
+    
+    // At this point the environment is not being used by any methods here.
+    // getenv/setenv/unsetenv do behave properly via POSIX definitions, but 
+    // it is only a storage facility at the moment.  In a future release, this
+    // map will be hooked up to the methods which depend on env.
+    public int setenv(String envName, String envValue, int overwrite) {
+        Map<String, String> env = helper.getEnv();
+        
+        if (envName.contains("=")) {
+            handler.error(EINVAL, envName);
+            return -1;
+        }
+        
+        // POSIX specified.  Existence is success if overwrite is 0.
+        if (overwrite == 0 && env.containsKey(envName)) return 0;
+        
+        env.put(envName, envValue);
+        
+        return 0;
+    }
 
     public FileStat stat(String path) {
         FileStat stat = allocateStat(); 
@@ -217,6 +267,15 @@ final class JavaPOSIX implements POSIX {
         return 0;
     }
 
+    public int unsetenv(String envName) {
+        if (helper.getEnv().remove(envName) == null) {
+            handler.error(EINVAL, envName);
+            return -1;
+        }
+        
+        return 0;
+    }
+    
     public int utimes(String path, long[] atimeval, long[] mtimeval) {
         long mtimeMillis;
         if (mtimeval != null) {
@@ -257,11 +316,16 @@ final class JavaPOSIX implements POSIX {
         return false;
     }
 
+    public LibC libc() {
+        return null;
+    }
+
     private int unimplementedInt(String message) {
         handler.unimplementedError(message);
         
         return -1;
     }
+    
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
         public static final int GID = IDHelper.getInt("-g");
