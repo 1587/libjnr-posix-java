@@ -2,19 +2,28 @@ Source: libjnr-posix-java
 Section: java
 Priority: optional
 Maintainer: Nicolas Duboc <nduboc@debian.org>
-Build-Depends: debhelper (>> 7.0.0), maven2, maven-debian-helper,
-  libmaven-clean-plugin-java
-Build-Depends-Indep: default-jdk, maven-repo-helper, libmaven-resources-plugin-java,
-  libmaven-compiler-plugin-java, libmaven-jar-plugin-java, libmaven-site-plugin-java,
-  libsurefire-java, libmaven-javadoc-plugin-java,
-  libjaffl-java, libconstantine-java (>= 0.7-3)
-Standards-Version: 3.9.2
+Build-Depends: debhelper (>> 7.0.0),
+               libmaven-clean-plugin-java,
+               maven-debian-helper,
+               maven2
+Build-Depends-Indep: default-jdk,
+                     libconstantine-java (>= 0.7-3),
+                     libjaffl-java (>= 0.5.9),
+                     libmaven-compiler-plugin-java,
+                     libmaven-jar-plugin-java,
+                     libmaven-javadoc-plugin-java,
+                     libmaven-resources-plugin-java,
+                     libmaven-site-plugin-java,
+                     libsurefire-java,
+                     maven-repo-helper
+Standards-Version: 3.9.3
 Homepage: https://github.com/wmeissner/jnr-posix
 
 Package: libjnr-posix-java
 Architecture: all
-Section: java
-Depends: ${misc:Depends}, default-jre-headless | java5-runtime-headless, libjaffl-java, libconstantine-java (>= 0.7-3)
+Depends: libconstantine-java (>= 0.7-3),
+         libjaffl-java (>= 0.5.9),
+         ${misc:Depends}
 Description: basic POSIX-like functions for Java
  This package is a Java library providing access to various
  POSIX functions like chmod(2), link(2) or getuid(2) through

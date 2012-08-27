@@ -6,8 +6,8 @@ JAVA_DIR = usr/share/java
 DOC_DIR = usr/share/doc/libjnr-posix-java-doc
 PKG_BUILDDIR = debian/libjnr-posix-java
 PKG_DOC_BUILDDIR = debian/libjnr-posix-java-doc
-
-MVN = mvn -s /etc/maven2/settings-debian.xml
+M2_HOME = /usr/share/maven2/
+MVN = $(M2_HOME)/bin/mvn -o -s /etc/maven2/settings-debian.xml
 
 
 build: build-stamp
@@ -24,8 +24,7 @@ clean:
 
 	rm -f build-stamp
 	$(MVN) clean
-	rm -rf debian/.mh/
-
+	mh_clean
 	dh_clean
 
 install: build
@@ -35,7 +34,7 @@ install: build
 
 	dh_installdirs -p libjnr-posix-java $(JAVA_DIR)
 
-	mh_installjar -plibjnr-posix-java --java-lib --usj-name=jnr-posix pom.xml target/jnr-posix-1.1.4.jar
+	mh_installjar -plibjnr-posix-java --java-lib --usj-name=jnr-posix pom.xml target/jnr-posix-1.1.8.jar
 	mh_installpom -plibjnr-posix-java pom.xml
 
 	dh_installdirs -p libjnr-posix-java-doc $(DOC_DIR)

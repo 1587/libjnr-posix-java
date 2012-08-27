@@ -1,3 +1,16 @@
+libjnr-posix-java (1.1.8-1) UNRELEASED; urgency=low
+
+  * Team upload.
+  * d/control: Use versionned B-D on libjaffl-java (>= 0.5.9), otherwise FTBFS.
+  * d/control: As per Java Policy, drop runtime dependency as
+    its a library package.
+  * d/rules: Force usage of offline Maven 2.
+  * d/patches/pom.diff: remove invalid dependencies from pom.xml.
+  * Switch to 3.0 source format.
+  * d/control: Bump Standards-Version to 3.9.3, no changes needed.
+
+ -- Damien Raude-Morvan <drazzib@debian.org>  Sun, 19 Aug 2012 01:49:58 +0200
+
 libjnr-posix-java (1.1.4~git1.8aa26268b-1) unstable; urgency=low
 
   * This package is a fork of the Debian libjna-posix-java package for
