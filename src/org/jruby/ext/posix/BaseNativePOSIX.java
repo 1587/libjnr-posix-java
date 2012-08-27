@@ -15,6 +15,7 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 abstract class BaseNativePOSIX implements POSIX {
     private final LibC libc;
@@ -41,6 +42,24 @@ abstract class BaseNativePOSIX implements POSIX {
     public int chown(String filename, int user, int group) {
         return libc().chown(filename, user, group);
     }
+    
+    public int exec(String path, String... args) {
+        handler.unimplementedError("exec unimplemented");
+        return -1;
+    }
+    
+    public int exec(String path, String[] args, String[] envp) {
+        handler.unimplementedError("exec unimplemented");
+        return -1;
+    }
+    
+    public int execv(String path, String[] args) {
+        return libc().execv(path, args);
+    }
+    
+    public int execve(String path, String[] args, String[] env) {
+        return libc().execve(path, args, env);
+    }
 
     public FileStat fstat(FileDescriptor fileDescriptor) {
         FileStat stat = allocateStat();
@@ -49,6 +68,10 @@ abstract class BaseNativePOSIX implements POSIX {
         if (libc().fstat(fd, stat) < 0) handler.error(ENOENT, ""+fd);
         
         return stat;
+    }
+    
+    public String getenv(String envName) {
+        return libc().getenv(envName);
     }
 
     public int getegid() {
@@ -193,6 +216,10 @@ abstract class BaseNativePOSIX implements POSIX {
         }
         return res;
     }
+    
+    public int setenv(String envName, String envValue, int overwrite) {
+        return libc().setenv(envName, envValue, overwrite);
+    }
 
     public FileStat stat(String path) {
         FileStat stat = allocateStat(); 
@@ -216,6 +243,10 @@ abstract class BaseNativePOSIX implements POSIX {
         buffer.position(0);
         buffer.limit(result);
         return Charset.forName("ASCII").decode(buffer).toString();
+    }
+    
+    public int unsetenv(String envName) {
+        return libc().unsetenv(envName);
     }
     
     public int umask(int mask) {

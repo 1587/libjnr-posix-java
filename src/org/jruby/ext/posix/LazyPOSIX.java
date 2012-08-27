@@ -3,6 +3,7 @@ package org.jruby.ext.posix;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.util.Map;
 
 final class LazyPOSIX implements POSIX {
 
@@ -29,7 +30,10 @@ final class LazyPOSIX implements POSIX {
                 ? posix
                 : (posix = POSIXFactory.loadPOSIX(handler, useNativePosix));
     }
-
+    
+    public FileStat allocateStat() {
+        return posix().allocateStat();
+    }
 
     public int chmod(String filename, int mode) {
         return posix().chmod(filename, mode);
@@ -54,7 +58,23 @@ final class LazyPOSIX implements POSIX {
     public void errno(int value) {
         posix().errno(value);
     }
+    
+    public int exec(String path, String... args) {
+        return posix().exec(path, args);
+    }
+    
+    public int exec(String path, String[] args, String[] envp) {
+        return posix().exec(path, args, envp);
+    }
 
+    public int execv(String path, String[] argv) {
+        return posix().execv(path, argv);
+    }
+
+    public int execve(String path, String[] argv, String[] envp) {
+        return posix().execve(path, argv, envp);
+    }
+    
     public int fork() {
         return posix().fork();
     }
@@ -229,5 +249,21 @@ final class LazyPOSIX implements POSIX {
 
     public boolean isNative() {
         return posix().isNative();
+    }
+
+    public LibC libc() {
+        return posix().libc();
+    }
+
+    public String getenv(String envName) {
+        return posix().getenv(envName);
+    }
+
+    public int setenv(String envName, String envValue, int overwrite) {
+        return posix().setenv(envName, envValue, overwrite);
+    }
+
+    public int unsetenv(String envName) {
+        return posix().unsetenv(envName);
     }
 }
