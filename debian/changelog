@@ -1,6 +1,8 @@
-libjnr-posix-java (1.1.8-1) UNRELEASED; urgency=low
+libjnr-posix-java (1.1.8-1) experimental; urgency=low
 
-  * Team upload.
+  * Transfert maintainance to pkg-java team.
+    - Add myself as Uploaders.
+    - Thanks to Nicolas Duboc for his work!
   * d/control: Use versionned B-D on libjaffl-java (>= 0.5.9), otherwise FTBFS.
   * d/control: As per Java Policy, drop runtime dependency as
     its a library package.

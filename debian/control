@@ -1,7 +1,8 @@
 Source: libjnr-posix-java
 Section: java
 Priority: optional
-Maintainer: Nicolas Duboc <nduboc@debian.org>
+Maintainer: Debian Java Maintainers <pkg-java-maintainers@lists.alioth.debian.org>
+Uploaders: Damien Raude-Morvan <drazzib@debian.org>
 Build-Depends: debhelper (>> 7.0.0),
                libmaven-clean-plugin-java,
                maven-debian-helper,
@@ -18,6 +19,8 @@ Build-Depends-Indep: default-jdk,
                      maven-repo-helper
 Standards-Version: 3.9.3
 Homepage: https://github.com/wmeissner/jnr-posix
+Vcs-Git: git://anonscm.debian.org/pkg-java/libjnr-posix-java.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-java/libjnr-posix-java.git
 
 Package: libjnr-posix-java
 Architecture: all
