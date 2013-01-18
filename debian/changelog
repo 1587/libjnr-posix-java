@@ -3,6 +3,7 @@ libjnr-posix-java (1.1.8-2) UNRELEASED; urgency=low
   * Add OSGi metadata into jar manifest.
   * Add Jakub Adam to Uploaders.
   * Bump Standards-Version to 3.9.4.
+  * Fixed debian-rules-missing-recommended-target lintian warnings.
 
  -- Jakub Adam <jakub.adam@ktknet.cz>  Fri, 18 Jan 2013 18:54:56 +0100
 

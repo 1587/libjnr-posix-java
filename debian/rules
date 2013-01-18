@@ -10,7 +10,7 @@ M2_HOME = /usr/share/maven2/
 MVN = $(M2_HOME)/bin/mvn -o -s /etc/maven2/settings-debian.xml
 
 
-build: build-stamp
+build-indep: build-stamp
 build-stamp:
 	dh_testdir
 
@@ -21,6 +21,10 @@ build-stamp:
 	bnd wrap -properties debian/jnr-posix.bnd -output target/jnr-posix-*.jar target/jnr-posix-*.jar
 
 	touch build-stamp
+
+build-arch:
+
+build: build-arch build-indep
 
 clean:
 	dh_testdir
