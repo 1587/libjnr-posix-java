@@ -19,7 +19,7 @@ Build-Depends-Indep: bnd,
                      libmaven-site-plugin-java,
                      libsurefire-java,
                      maven-repo-helper
-Standards-Version: 3.9.3
+Standards-Version: 3.9.4
 Homepage: https://github.com/wmeissner/jnr-posix
 Vcs-Git: git://anonscm.debian.org/pkg-java/libjnr-posix-java.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-java/libjnr-posix-java.git
