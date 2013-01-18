@@ -2,7 +2,8 @@ Source: libjnr-posix-java
 Section: java
 Priority: optional
 Maintainer: Debian Java Maintainers <pkg-java-maintainers@lists.alioth.debian.org>
-Uploaders: Damien Raude-Morvan <drazzib@debian.org>
+Uploaders: Damien Raude-Morvan <drazzib@debian.org>,
+           Jakub Adam <jakub.adam@ktknet.cz>
 Build-Depends: debhelper (>> 7.0.0),
                libmaven-clean-plugin-java,
                maven-debian-helper,
