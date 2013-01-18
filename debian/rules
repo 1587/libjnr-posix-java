@@ -16,6 +16,10 @@ build-stamp:
 
 	$(MVN) verify
 	$(MVN) javadoc:javadoc
+
+	# Generate OSGi metadata
+	bnd wrap -properties debian/jnr-posix.bnd -output target/jnr-posix-*.jar target/jnr-posix-*.jar
+
 	touch build-stamp
 
 clean:
