@@ -3,3 +3,4 @@ Bundle-SymbolicName: org.jruby.ext.posix
 Bundle-Version: 1.0.0
 Bundle-Vendor: Debian.org
 Import-Package: *
+Eclipse-BuddyPolicy: global
