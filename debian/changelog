@@ -1,3 +1,12 @@
+jnr-posix (3.0.10-1) experimental; urgency=low
+
+  [ Tim Potter ]
+  * New upstream version.
+  * Update packaging to use maven-debian-helper.
+  * Rename source package to be consistent with other jnr packages.
+
+ -- Tim Potter <tpot@hp.com>  Tue, 07 Apr 2015 13:21:36 +1000
+
 libjnr-posix-java (1.1.8-2) unstable; urgency=low
 
   [ Jakub Adam ]

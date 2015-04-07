@@ -1,69 +1,7 @@
 #!/usr/bin/make -f
 
-# FIXME: support of DEB_BUILD_OPTIONS nocheck and nostrip
+export JAVA_HOME=/usr/lib/jvm/default-java
+export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8
 
-JAVA_DIR = usr/share/java
-DOC_DIR = usr/share/doc/libjnr-posix-java-doc
-PKG_BUILDDIR = debian/libjnr-posix-java
-PKG_DOC_BUILDDIR = debian/libjnr-posix-java-doc
-M2_HOME = /usr/share/maven2/
-MVN = $(M2_HOME)/bin/mvn -o -s /etc/maven2/settings-debian.xml
-
-
-build-indep: build-stamp
-build-stamp:
-	dh_testdir
-
-	$(MVN) verify
-	$(MVN) javadoc:javadoc
-
-	# Generate OSGi metadata
-	bnd wrap -properties debian/jnr-posix.bnd -output target/jnr-posix-*.jar target/jnr-posix-*.jar
-
-	touch build-stamp
-
-build-arch:
-
-build: build-arch build-indep
-
-clean:
-	dh_testdir
-	dh_testroot
-
-	rm -f build-stamp
-	$(MVN) clean
-	mh_clean
-	dh_clean
-
-install: build
-	dh_testdir
-	dh_testroot
-	dh_prep
-
-	dh_installdirs -p libjnr-posix-java $(JAVA_DIR)
-
-	mh_installjar -plibjnr-posix-java --java-lib --usj-name=jnr-posix pom.xml target/jnr-posix-1.1.8.jar
-	mh_installpom -plibjnr-posix-java pom.xml
-
-	dh_installdirs -p libjnr-posix-java-doc $(DOC_DIR)
-	mv target/site/apidocs  $(PKG_DOC_BUILDDIR)/$(DOC_DIR)/javadoc
-
-
-binary-indep: build install
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs --indep
-	dh_installdocs --indep
-	dh_compress --indep
-	dh_fixperms --indep
-	dh_installdeb --indep
-	dh_gencontrol --indep
-	dh_md5sums --indep
-	dh_builddeb --indep
-
-binary-arch:
-
-binary: binary-indep binary-arch
-
-
-.PHONY: build install clean binary-indep binary
+%:
+	dh $@ --buildsystem=maven --with javahelper

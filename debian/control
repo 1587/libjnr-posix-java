@@ -1,34 +1,22 @@
-Source: libjnr-posix-java
+Source: jnr-posix
 Section: java
 Priority: optional
 Maintainer: Debian Java Maintainers <pkg-java-maintainers@lists.alioth.debian.org>
 Uploaders: Damien Raude-Morvan <drazzib@debian.org>,
-           Jakub Adam <jakub.adam@ktknet.cz>
-Build-Depends: debhelper (>> 7.0.0),
-               libmaven-clean-plugin-java,
-               maven-debian-helper,
-               maven2
-Build-Depends-Indep: bnd,
-                     default-jdk,
-                     libconstantine-java (>= 0.7-3),
-                     libjaffl-java (>= 0.5.9),
-                     libmaven-compiler-plugin-java,
-                     libmaven-jar-plugin-java,
-                     libmaven-javadoc-plugin-java,
-                     libmaven-resources-plugin-java,
-                     libmaven-site-plugin-java,
-                     libsurefire-java,
-                     maven-repo-helper
-Standards-Version: 3.9.4
-Homepage: https://github.com/wmeissner/jnr-posix
-Vcs-Git: git://anonscm.debian.org/pkg-java/libjnr-posix-java.git
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-java/libjnr-posix-java.git
+           Jakub Adam <jakub.adam@ktknet.cz>,
+           Tim Potter <tpot@hp.com>
+Build-Depends: debhelper (>= 9), default-jdk, javahelper, maven-debian-helper, libmaven-javadoc-plugin-java, libjnr-ffi-java, libjnr-constants-java
+Standards-Version: 3.9.6
+Homepage: https://github.com/jnr/jnr-posix
+Vcs-Git: git://anonscm.debian.org/pkg-java/jnr-posix.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-java/jnr-posix.git
 
 Package: libjnr-posix-java
 Architecture: all
-Depends: libconstantine-java (>= 0.7-3),
+Depends: libjnr-constants-java,
          libjaffl-java (>= 0.5.9),
-         ${misc:Depends}
+         ${maven:Depends}, ${misc:Depends}
+Suggests: libjnr-posix-java-doc, ${maven:OptionalDepends}
 Description: basic POSIX-like functions for Java
  This package is a Java library providing access to various
  POSIX functions like chmod(2), link(2) or getuid(2) through
@@ -37,9 +25,8 @@ Description: basic POSIX-like functions for Java
 Package: libjnr-posix-java-doc
 Architecture: all
 Section: doc
-Depends: ${misc:Depends}
-Recommends: w3m | www-browser
-Suggests: libjnr-posix-java
+Depends: ${maven:DocDepends}, ${misc:Depends}
+Suggests: libjnr-posix-java, ${maven:DocOptionalDepends}
 Description: Java JNR-POSIX library API documentation
  This package includes the development documentation for the
  JNR-POSIX library which provides access to various POSIX
