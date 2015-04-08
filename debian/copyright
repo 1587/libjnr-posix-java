@@ -12,6 +12,7 @@ command:
 
 Debian packaging (files in debian/ directory):
 Copyright @ 2009, 2011 Nicolas Duboc
+Copyright 2015 Tim Potter
 MTT-like licence reproduced below.
 
 Original package:
@@ -20,7 +21,7 @@ Copyright (C) 2007 Thomas E Enebo <enebo@acm.org>
 Copyright (C) 2007 Charles O Nutter <headius@headius.com>
 Copyright (C) 2008 Google Inc. All Rights Reserved.
 
-jna-posix is released under a tri CPL/GPL/LGPL license. You can use it,
+jnr-posix is released under a tri CPL/GPL/LGPL license. You can use it,
 redistribute it and/or modify it under the terms of the license of your choice.
 
 On Debian GNU/Linux systems, the complete text of the GNU General
