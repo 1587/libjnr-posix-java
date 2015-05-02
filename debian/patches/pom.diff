@@ -4,8 +4,8 @@ Author: Damien Raude-Morvan <drazzib@debian.org>
 Forwarded: not-needed
 Last-Update: 2012-08-29
 
---- a/pom.xml
-+++ b/pom.xml
+--- a/pom.xml	2012-08-27 19:13:49.000000000 -0300
++++ b/pom.xml	2015-05-02 15:59:43.482068000 -0300
 @@ -89,32 +89,24 @@
      <dependency>
        <groupId>junit</groupId>
@@ -22,10 +22,12 @@ Last-Update: 2012-08-29
 +      <version>debian</version>
      </dependency>
      <dependency>
-       <groupId>org.jruby.extras</groupId>
-       <artifactId>constantine</artifactId>
+-      <groupId>org.jruby.extras</groupId>
+-      <artifactId>constantine</artifactId>
 -      <version>0.7</version>
 -      <scope>provided</scope>
++      <groupId>com.github.jnr</groupId>
++      <artifactId>jnr-constants</artifactId>
 +      <version>debian</version>
      </dependency>
    </dependencies>

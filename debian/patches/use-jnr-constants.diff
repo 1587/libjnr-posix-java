@@ -1,0 +1,17 @@
+Description: Replace class names under constantine packages with jnr-constants ones
+Author: Miguel Landaeta <nomadium@debian.org>
+Forwarded: no
+Last-Update: 2015-01-02
+
+--- libjnr-posix-java-1.1.8.orig/src/org/jruby/ext/posix/WindowsPOSIX.java
++++ libjnr-posix-java-1.1.8/src/org/jruby/ext/posix/WindowsPOSIX.java
+@@ -2,7 +2,8 @@ package org.jruby.ext.posix;
+ 
+ import com.kenai.constantine.platform.Errno;
+ import static com.kenai.constantine.platform.Errno.*;
+-import static com.kenai.constantine.platform.windows.LastError.*;
++//import static com.kenai.constantine.platform.windows.LastError.*;
++import static jnr.constants.platform.windows.LastError.*;
+ import com.kenai.jaffl.Pointer;
+ import com.kenai.jaffl.Type;
+ import com.kenai.jaffl.provider.jffi.Provider;

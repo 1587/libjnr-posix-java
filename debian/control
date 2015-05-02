@@ -10,7 +10,7 @@ Build-Depends: debhelper (>> 7.0.0),
                maven2
 Build-Depends-Indep: bnd,
                      default-jdk,
-                     libconstantine-java (>= 0.7-3),
+                     libjnr-constants-java,
                      libjaffl-java (>= 0.5.9),
                      libmaven-compiler-plugin-java,
                      libmaven-jar-plugin-java,
@@ -19,14 +19,14 @@ Build-Depends-Indep: bnd,
                      libmaven-site-plugin-java,
                      libsurefire-java,
                      maven-repo-helper
-Standards-Version: 3.9.4
+Standards-Version: 3.9.6
 Homepage: https://github.com/wmeissner/jnr-posix
-Vcs-Git: git://anonscm.debian.org/pkg-java/libjnr-posix-java.git
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-java/libjnr-posix-java.git
+Vcs-Git: git://anonscm.debian.org/pkg-java/jnr-posix.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-java/jnr-posix.git
 
 Package: libjnr-posix-java
 Architecture: all
-Depends: libconstantine-java (>= 0.7-3),
+Depends: libjnr-constants-java,
          libjaffl-java (>= 0.5.9),
          ${misc:Depends}
 Description: basic POSIX-like functions for Java

@@ -1,3 +1,12 @@
+libjnr-posix-java (1.1.8-3) unstable; urgency=medium
+
+  * Team upload.
+  * Replace dependency on libconstantine-jaba with libjnr-constants-java.
+  * Bump Standards-Version to 3.9.6. No changes were required.
+  * Update Vcs-* fields.
+
+ -- Miguel Landaeta <nomadium@debian.org>  Sat, 02 May 2015 14:46:30 -0300
+
 libjnr-posix-java (1.1.8-2) unstable; urgency=low
 
   [ Jakub Adam ]

@@ -2,7 +2,8 @@ package org.jruby.ext.posix;
 
 import com.kenai.constantine.platform.Errno;
 import static com.kenai.constantine.platform.Errno.*;
-import static com.kenai.constantine.platform.windows.LastError.*;
+//import static com.kenai.constantine.platform.windows.LastError.*;
+import static jnr.constants.platform.windows.LastError.*;
 import com.kenai.jaffl.Pointer;
 import com.kenai.jaffl.Type;
 import com.kenai.jaffl.provider.jffi.Provider;

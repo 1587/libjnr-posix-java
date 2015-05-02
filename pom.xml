@@ -98,8 +98,8 @@
       <version>debian</version>
     </dependency>
     <dependency>
-      <groupId>org.jruby.extras</groupId>
-      <artifactId>constantine</artifactId>
+      <groupId>com.github.jnr</groupId>
+      <artifactId>jnr-constants</artifactId>
       <version>debian</version>
     </dependency>
   </dependencies>
