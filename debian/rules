@@ -5,3 +5,10 @@ export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8
 
 %:
 	dh $@ --buildsystem=maven --with javahelper
+
+JAR=debian/libjnr-posix-java/usr/share/java/jnr-posix.jar
+override_jh_manifest:
+	jh_manifest
+
+	# generate OSGi metadata
+	bnd wrap --properties debian/jnr-posix.bnd --output $(JAR) $(JAR)

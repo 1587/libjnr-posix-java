@@ -13,7 +13,8 @@ Build-Depends: debhelper (>= 9),
  libjnr-constants-java,
  libjnr-ffi-java,
  libmaven-javadoc-plugin-java,
- maven-debian-helper
+ maven-debian-helper,
+ bnd
 Standards-Version: 3.9.6
 Homepage: https://github.com/jnr/jnr-posix
 Vcs-Git: git://anonscm.debian.org/pkg-java/jnr-posix.git

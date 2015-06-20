@@ -1,3 +1,10 @@
+jnr-posix (3.0.10-3) UNRELEASED; urgency=medium
+
+  * Re-enable OSGi metadata generation.
+    - Lost during package update.
+
+ -- Jakub Adam <jakub.adam@ktknet.cz>  Sat, 20 Jun 2015 22:36:25 +0200
+
 jnr-posix (3.0.10-2) unstable; urgency=medium
 
   * Team upload.
