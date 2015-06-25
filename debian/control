@@ -23,7 +23,6 @@ Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-java/jnr-posix.git
 Package: libjnr-posix-java
 Architecture: all
 Depends: libjnr-constants-java,
-         libjaffl-java (>= 0.5.9),
          ${maven:Depends}, ${misc:Depends}
 Suggests: libjnr-posix-java-doc, ${maven:OptionalDepends}
 Description: basic POSIX-like functions for Java
