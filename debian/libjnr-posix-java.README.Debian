@@ -6,12 +6,8 @@ access to various POSIX functions like chmod(2), link(2) or getuid(2)
 through dynamic loading of native libraries with JNA.
 
  The library is composed of only one jar file.  This jar file depends
-on the Constantine library, provided by the libconstantine-java
-package, and the jaffl library provided by the libjaffl-java package.
- Developers should then include the following paths in the
-CLASSPATH, in addition to the dependencies of constantine and jaffl:
-
-    /usr/share/java/constantine.jar:/usr/share/java/jaffl.jar:/usr/share/java/jnr-posix.jar
+on jnr-ffi.jar provided by libjnr-ffi-java package, and jnr-constants.jar
+provided by libjnr-constants-java package.
 
  This jar file is also installed in the local Maven Debian repository in
 /usr/share/maven-repo.  The artifact ID is org.jruby.ext.posix:jnr-posix:debian.
