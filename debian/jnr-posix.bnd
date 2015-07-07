@@ -1,5 +1,5 @@
 Bundle-Name: basic POSIX-like functions for Java
-Bundle-SymbolicName: org.jruby.ext.posix
+Bundle-SymbolicName: jnr.posix
 Bundle-Version: 1.0.0
 Bundle-Vendor: Debian.org
 Import-Package: sun.misc;resolution:=optional, *
