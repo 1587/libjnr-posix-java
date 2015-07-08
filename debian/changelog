@@ -1,4 +1,4 @@
-jnr-posix (3.0.10-3) UNRELEASED; urgency=medium
+jnr-posix (3.0.10-3) unstable; urgency=medium
 
   * Re-enable OSGi metadata generation.
     - Lost during package update.
