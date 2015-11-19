@@ -11,5 +11,5 @@ libraries with JNA.
 
  The library itself is provided by the libjnr-posix-java package.
 
--- 
+--
 Nicolas Duboc <nduboc@debian.org>
