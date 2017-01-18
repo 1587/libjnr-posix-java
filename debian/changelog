@@ -8,6 +8,7 @@ jnr-posix (3.0.33-1) UNRELEASED; urgency=medium
   * Bump debhelper compat level to 10.
   * Bump Standards-Version to 3.9.8. No changes were required.
   * Switch Vcs-Git URL to https.
+  * Add get-orig-source target to d/rules.
 
  -- Miguel Landaeta <nomadium@debian.org>  Wed, 18 Jan 2017 21:22:59 +0000
 
