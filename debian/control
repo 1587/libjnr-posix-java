@@ -6,18 +6,18 @@ Uploaders: Damien Raude-Morvan <drazzib@debian.org>,
            Jakub Adam <jakub.adam@ktknet.cz>,
            Tim Potter <tpot@hp.com>,
            Miguel Landaeta <nomadium@debian.org>
-Build-Depends: debhelper (>= 9),
- default-jdk,
- javahelper,
- junit4,
- libjffi-java (>= 1.2.7~),
- libjnr-x86asm-java (>= 1.0.2~),
- libjnr-constants-java,
- libjnr-ffi-java (>= 2.1.2~),
- libmaven-bundle-plugin-java,
- libmaven-javadoc-plugin-java,
- maven-debian-helper,
- bnd (>= 2.1.0)
+Build-Depends: bnd (>= 2.1.0),
+               debhelper (>= 9),
+               default-jdk,
+               javahelper,
+               junit4,
+               libjffi-java (>= 1.2.7~),
+               libjnr-constants-java,
+               libjnr-ffi-java (>= 2.1.2~),
+               libjnr-x86asm-java (>= 1.0.2~),
+               libmaven-bundle-plugin-java,
+               libmaven-javadoc-plugin-java,
+               maven-debian-helper
 Standards-Version: 3.9.6
 Homepage: https://github.com/jnr/jnr-posix
 Vcs-Git: git://anonscm.debian.org/pkg-java/jnr-posix.git
@@ -26,8 +26,10 @@ Vcs-Browser: https://anonscm.debian.org/cgit/pkg-java/jnr-posix.git
 Package: libjnr-posix-java
 Architecture: all
 Depends: libjnr-constants-java,
-         ${maven:Depends}, ${misc:Depends}
-Suggests: libjnr-posix-java-doc, ${maven:OptionalDepends}
+         ${maven:Depends},
+         ${misc:Depends}
+Suggests: libjnr-posix-java-doc,
+          ${maven:OptionalDepends}
 Description: basic POSIX-like functions for Java
  This package is a Java library providing access to various
  POSIX functions like chmod(2), link(2) or getuid(2) through
@@ -36,8 +38,10 @@ Description: basic POSIX-like functions for Java
 Package: libjnr-posix-java-doc
 Architecture: all
 Section: doc
-Depends: ${maven:DocDepends}, ${misc:Depends}
-Suggests: libjnr-posix-java, ${maven:DocOptionalDepends}
+Depends: ${maven:DocDepends},
+         ${misc:Depends}
+Suggests: libjnr-posix-java,
+          ${maven:DocOptionalDepends}
 Description: Java JNR-POSIX library API documentation
  This package includes the development documentation for the
  JNR-POSIX library which provides access to various POSIX

@@ -4,6 +4,7 @@ jnr-posix (3.0.33-1) UNRELEASED; urgency=medium
   * Add myself as uploader.
   * Update B-D on libjnr-ffi-java to versioned one (>= 2.1.2~).
   * Add B-D on libmaven-bundle-plugin-java.
+  * Wrap and sort dependencies lists.
 
  -- Miguel Landaeta <nomadium@debian.org>  Wed, 18 Jan 2017 21:22:59 +0000
 
