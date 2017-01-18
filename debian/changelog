@@ -2,6 +2,7 @@ jnr-posix (3.0.33-1) UNRELEASED; urgency=medium
 
   * New upstream release. (Closes: #851323)
   * Add myself as uploader.
+  * Update B-D on libjnr-ffi-java to versioned one (>= 2.1.2~).
 
  -- Miguel Landaeta <nomadium@debian.org>  Wed, 18 Jan 2017 21:22:59 +0000
 

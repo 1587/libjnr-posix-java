@@ -13,7 +13,7 @@ Build-Depends: debhelper (>= 9),
  libjffi-java (>= 1.2.7~),
  libjnr-x86asm-java (>= 1.0.2~),
  libjnr-constants-java,
- libjnr-ffi-java,
+ libjnr-ffi-java (>= 2.1.2~),
  libmaven-javadoc-plugin-java,
  maven-debian-helper,
  bnd (>= 2.1.0)
