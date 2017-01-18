@@ -20,7 +20,7 @@ Build-Depends: bnd (>= 2.1.0),
                maven-debian-helper
 Standards-Version: 3.9.8
 Homepage: https://github.com/jnr/jnr-posix
-Vcs-Git: git://anonscm.debian.org/pkg-java/jnr-posix.git
+Vcs-Git: https://anonscm.debian.org/git/pkg-java/jnr-posix.git
 Vcs-Browser: https://anonscm.debian.org/cgit/pkg-java/jnr-posix.git
 
 Package: libjnr-posix-java
