@@ -14,6 +14,7 @@ Build-Depends: debhelper (>= 9),
  libjnr-x86asm-java (>= 1.0.2~),
  libjnr-constants-java,
  libjnr-ffi-java (>= 2.1.2~),
+ libmaven-bundle-plugin-java,
  libmaven-javadoc-plugin-java,
  maven-debian-helper,
  bnd (>= 2.1.0)
