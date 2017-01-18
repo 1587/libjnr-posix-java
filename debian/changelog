@@ -1,4 +1,4 @@
-jnr-posix (3.0.33-1) UNRELEASED; urgency=medium
+jnr-posix (3.0.33-1) experimental; urgency=medium
 
   * New upstream release. (Closes: #851323)
   * Add myself as uploader.
@@ -12,7 +12,7 @@ jnr-posix (3.0.33-1) UNRELEASED; urgency=medium
   * Switch d/copyright file to 1.0 format.
   * Delete obsolete README.Debian files.
 
- -- Miguel Landaeta <nomadium@debian.org>  Wed, 18 Jan 2017 21:22:59 +0000
+ -- Miguel Landaeta <nomadium@debian.org>  Wed, 18 Jan 2017 21:44:56 +0000
 
 jnr-posix (3.0.12-2) unstable; urgency=medium
 
