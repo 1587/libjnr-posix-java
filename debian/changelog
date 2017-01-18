@@ -6,6 +6,7 @@ jnr-posix (3.0.33-1) UNRELEASED; urgency=medium
   * Add B-D on libmaven-bundle-plugin-java.
   * Wrap and sort dependencies lists.
   * Bump debhelper compat level to 10.
+  * Bump Standards-Version to 3.9.8. No changes were required.
 
  -- Miguel Landaeta <nomadium@debian.org>  Wed, 18 Jan 2017 21:22:59 +0000
 
