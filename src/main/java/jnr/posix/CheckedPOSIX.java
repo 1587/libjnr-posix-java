@@ -3,6 +3,7 @@ package jnr.posix;
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Signal;
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Pointer;
 import jnr.posix.util.MethodName;
 import jnr.posix.util.ProcessMaker;
 
@@ -208,11 +209,38 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.getuid(); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int getrlimit(int resource, RLimit rlim) {
+        try { return posix.getrlimit(resource, rlim); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int getrlimit(int resource, Pointer rlim) {
+        try { return posix.getrlimit(resource, rlim); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public RLimit getrlimit(int resource) {
+        try { return posix.getrlimit(resource); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
+
+    public int setrlimit(int resource, RLimit rlim) {
+        try { return posix.setrlimit(resource, rlim); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int setrlimit(int resource, Pointer rlim) {
+        try { return posix.setrlimit(resource, rlim); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int setrlimit(int resource, long rlimCur, long rlimMax) {
+        try { return posix.setrlimit(resource, rlimCur, rlimMax); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public boolean isatty(FileDescriptor descriptor) {
         try { return posix.isatty(descriptor); } catch (UnsatisfiedLinkError ule) { return unimplementedBool(); }
     }
-
     public int kill(int pid, int signal) {
+        return kill((long) pid, signal);
+    }
+
+    public int kill(long pid, int signal) {
         try { return posix.kill(pid, signal); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
@@ -246,6 +274,18 @@ final class CheckedPOSIX implements POSIX {
 
     public String readlink(String path) throws IOException {
         try { return posix.readlink(path); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
+
+    public int readlink(CharSequence path, byte[] buf, int bufsize) {
+        try { return posix.readlink(path, buf, bufsize); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int readlink(CharSequence path, ByteBuffer buf, int bufsize) {
+        try { return posix.readlink(path, buf, bufsize); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int readlink(CharSequence path, Pointer bufPtr, int bufsize) {
+        try { return posix.readlink(path, bufPtr, bufsize); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
     public int rmdir(String path) {
@@ -312,8 +352,16 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.utimes(path, atimeval, mtimeval); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int utimes(String path, Pointer times) {
+        try { return posix.utimes(path, times); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public int futimes(int fd, long[] atimeval, long[] mtimeval) {
         try { return posix.futimes(fd, atimeval, mtimeval); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int lutimes(String path, long[] atimeval, long[] mtimeval) {
+        try { return posix.lutimes(path, atimeval, mtimeval); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
     public int wait(int[] status) {
@@ -334,6 +382,10 @@ final class CheckedPOSIX implements POSIX {
 
     public LibC libc() {
         return posix.libc();
+    }
+
+    public Pointer environ() {
+        try { return posix.environ(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }
 
     public String getenv(String envName) {
@@ -391,6 +443,10 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.fcntl(fd, fcntlConst); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int access(CharSequence path, int amode) {
+        try { return posix.access(path, amode); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public int close(int fd) {
         try { return posix.close(fd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
@@ -403,40 +459,62 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.open(path, flags, perm); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
-    public int read(int fd, byte[] buf, int n) {
+    public long read(int fd, byte[] buf, long n) {
         try { return posix.read(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
-
-    public int write(int fd, byte[] buf, int n) {
+    public long write(int fd, byte[] buf, long n) {
         try { return posix.write(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
-
-    public int read(int fd, ByteBuffer buf, int n) {
+    public long read(int fd, ByteBuffer buf, long n) {
         try { return posix.read(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
-
-    public int write(int fd, ByteBuffer buf, int n) {
+    public long write(int fd, ByteBuffer buf, long n) {
         try { return posix.write(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
-
-    public int pread(int fd, byte[] buf, int n, int offset) {
+    public long pread(int fd, byte[] buf, long n, long offset) {
         try { return posix.pread(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
-
-    public int pwrite(int fd, byte[] buf, int n, int offset) {
+    public long pwrite(int fd, byte[] buf, long n, long offset) {
+        try { return posix.pwrite(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public long pread(int fd, ByteBuffer buf, long n, long offset) {
+        try { return posix.pread(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public long pwrite(int fd, ByteBuffer buf, long n, long offset) {
         try { return posix.pwrite(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int read(int fd, byte[] buf, int n) {
+        try { return posix.read(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public int write(int fd, byte[] buf, int n) {
+        try { return posix.write(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public int read(int fd, ByteBuffer buf, int n) {
+        try { return posix.read(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public int write(int fd, ByteBuffer buf, int n) {
+        try { return posix.write(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public int pread(int fd, byte[] buf, int n, int offset) {
+        try { return posix.pread(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        try { return posix.pwrite(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
     public int pread(int fd, ByteBuffer buf, int n, int offset) {
         try { return posix.pread(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
-
     public int pwrite(int fd, ByteBuffer buf, int n, int offset) {
         try { return posix.pwrite(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
     public int lseek(int fd, long offset, int whence) {
         try { return posix.lseek(fd, offset, whence); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public long lseekLong(int fd, long offset, int whence) {
+        try { return posix.lseekLong(fd, offset, whence); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
     public int pipe(int[] fds) {
@@ -455,8 +533,16 @@ final class CheckedPOSIX implements POSIX {
         try {return posix.recvmsg(socket, message, flags); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int truncate(CharSequence path, long length) {
+        try { return posix.truncate(path, length); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public int ftruncate(int fd, long offset) {
         try {return posix.ftruncate(fd, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int rename(CharSequence oldName, CharSequence newName) {
+        try {return posix.rename(oldName, newName); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
     public String getcwd() {
@@ -469,5 +555,30 @@ final class CheckedPOSIX implements POSIX {
 
     public int fdatasync(int fd) {
         try {return posix.fsync(fd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int mkfifo(String path, int mode) {
+        try {return posix.mkfifo(path, mode); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int daemon(int nochdir, int noclose) {
+        try {return posix.daemon(nochdir, noclose); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public long[] getgroups() {
+        try {return posix.getgroups(); } catch (UnsatisfiedLinkError ule) { return null; }
+    }
+
+    public int getgroups(int size, int[] groups) {
+        try {return posix.getgroups(size, groups); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public String nl_langinfo(int item) {
+        try {return posix.nl_langinfo(item); } catch (UnsatisfiedLinkError ule) { return unimplementedString(); }
+    }
+
+    @Override
+    public String strerror(int code) {
+        try {return posix.strerror(code); } catch (UnsatisfiedLinkError ule) { return unimplementedString(); }
     }
 }

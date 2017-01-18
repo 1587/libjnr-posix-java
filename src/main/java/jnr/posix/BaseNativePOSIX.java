@@ -18,12 +18,13 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import jnr.constants.platform.Signal;
 
-abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
+public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     private final LibC libc;
     
     protected final POSIXHandler handler;
@@ -31,7 +32,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     
     protected final Map<Signal, SignalHandler> signalHandlers = new HashMap();
     
-    BaseNativePOSIX(LibCProvider libcProvider, POSIXHandler handler) {
+    protected BaseNativePOSIX(LibCProvider libcProvider, POSIXHandler handler) {
         this.handler = handler;
         this.libc = libcProvider.getLibC();
         this.helper = new JavaLibCHelper(handler);
@@ -134,7 +135,11 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int fstat(int fd, FileStat stat) {
         return libc().fstat(fd, stat);
     }
-    
+
+    public Pointer environ() {
+        return getRuntime().getMemoryManager().newPointer(libc().environ().get());
+    }
+
     public String getenv(String envName) {
         return libc().getenv(envName);
     }
@@ -217,6 +222,37 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().getuid();
     }
 
+    public int getrlimit(int resource, RLimit rlim) {
+        return libc().getrlimit(resource, rlim);
+    }
+
+    public int getrlimit(int resource, Pointer rlim) {
+        return libc().getrlimit(resource, rlim);
+    }
+
+    public RLimit getrlimit(int resource) {
+        RLimit rlim = new DefaultNativeRLimit(getRuntime());
+
+        if (getrlimit(resource, rlim) < 0) handler.error(Errno.valueOf(errno()), "rlim");
+
+        return rlim;
+    }
+
+    public int setrlimit(int resource, RLimit rlim) {
+        return libc().setrlimit(resource, rlim);
+    }
+
+    public int setrlimit(int resource, Pointer rlim) {
+        return libc().setrlimit(resource, rlim);
+    }
+
+    public int setrlimit(int resource, long rlimCur, long rlimMax) {
+        RLimit rlim = new DefaultNativeRLimit(getRuntime());
+        rlim.init(rlimCur, rlimMax);
+
+        return libc().setrlimit(resource, rlim);
+    }
+
     public int setegid(int egid) {
         return libc().setegid(egid);
     }
@@ -254,9 +290,13 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public int kill(int pid, int signal) {
+        return kill((long) pid, signal);
+    }
+
+    public int kill(long pid, int signal) {
         return libc().kill(pid, signal);
     }
-    
+
     public SignalHandler signal(Signal sig, final SignalHandler handler) {
         synchronized (signalHandlers) {
             SignalHandler old = signalHandlers.get(sig);
@@ -355,7 +395,19 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         buffer.limit(result);
         return Charset.forName("ASCII").decode(buffer).toString();
     }
-    
+
+    public int readlink(CharSequence path, byte[] buf, int bufsize) {
+        return libc().readlink(path, buf, bufsize);
+    }
+
+    public int readlink(CharSequence path, ByteBuffer buf, int bufsize) {
+        return libc().readlink(path, buf, bufsize);
+    }
+
+    public int readlink(CharSequence path, Pointer bufPtr, int bufsize) {
+        return libc().readlink(path, bufPtr, bufsize);
+    }
+
     public int unsetenv(String envName) {
         return libc().unsetenv(envName);
     }
@@ -374,6 +426,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().utimes(path, times);
     }
 
+    public int utimes(String path, Pointer times) {
+        return libc().utimes(path, times);
+    }
+
     public int futimes(int fd, long[] atimeval, long[] mtimeval) {
         Timeval[] times = null;
         if (atimeval != null && mtimeval != null) {
@@ -382,6 +438,16 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
             times[1].setTime(mtimeval);
         }
         return libc().futimes(fd, times);
+    }
+
+    public int lutimes(String path, long[] atimeval, long[] mtimeval) {
+        Timeval[] times = null;
+        if (atimeval != null && mtimeval != null) {
+            times = Struct.arrayOf(getRuntime(), DefaultNativeTimeval.class, 2);
+            times[0].setTime(atimeval);
+            times[1].setTime(mtimeval);
+        }
+        return libc().lutimes(path, times);
     }
 
     public int fork() {
@@ -496,6 +562,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().fcntl(fd, fcntl.intValue());
     }
 
+    public int access(CharSequence path, int amode) {
+        return libc().access(path, amode);
+    }
+
     public int close(int fd) {
         return libc().close(fd);
     }
@@ -545,39 +615,61 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().open(path, flags, perm);
     }
 
-    public int read(int fd, byte[] buf, int n) {
+    public long read(int fd, byte[] buf, long n) {
         return libc().read(fd, buf, n);
     }
-
-    public int write(int fd, byte[] buf, int n) {
+    public long write(int fd, byte[] buf, long n) {
         return libc().write(fd, buf, n);
     }
-
-    public int read(int fd, ByteBuffer buf, int n) {
+    public long read(int fd, ByteBuffer buf, long n) {
         return libc().read(fd, buf, n);
     }
-
-    public int write(int fd, ByteBuffer buf, int n) {
+    public long write(int fd, ByteBuffer buf, long n) {
         return libc().write(fd, buf, n);
     }
-
-    public int pread(int fd, byte[] buf, int n, int offset) {
+    public long pread(int fd, byte[] buf, long n, long offset) {
         return libc().pread(fd, buf, n, offset);
     }
-
-    public int pwrite(int fd, byte[] buf, int n, int offset) {
+    public long pwrite(int fd, byte[] buf, long n, long offset) {
+        return libc().pwrite(fd, buf, n, offset);
+    }
+    public long pread(int fd, ByteBuffer buf, long n, long offset) {
+        return libc().pread(fd, buf, n, offset);
+    }
+    public long pwrite(int fd, ByteBuffer buf, long n, long offset) {
         return libc().pwrite(fd, buf, n, offset);
     }
 
+    public int read(int fd, byte[] buf, int n) {
+        return libc().read(fd, buf, n);
+    }
+    public int write(int fd, byte[] buf, int n) {
+        return libc().write(fd, buf, n);
+    }
+    public int read(int fd, ByteBuffer buf, int n) {
+        return libc().read(fd, buf, n);
+    }
+    public int write(int fd, ByteBuffer buf, int n) {
+        return libc().write(fd, buf, n);
+    }
+    public int pread(int fd, byte[] buf, int n, int offset) {
+        return libc().pread(fd, buf, n, offset);
+    }
+    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        return libc().pwrite(fd, buf, n, offset);
+    }
     public int pread(int fd, ByteBuffer buf, int n, int offset) {
         return libc().pread(fd, buf, n, offset);
     }
-
     public int pwrite(int fd, ByteBuffer buf, int n, int offset) {
         return libc().pwrite(fd, buf, n, offset);
     }
 
     public int lseek(int fd, long offset, int whence) {
+        return (int) libc().lseek(fd, offset, whence);
+    }
+
+    public long lseekLong(int fd, long offset, int whence) {
         return libc().lseek(fd, offset, whence);
     }
 
@@ -597,8 +689,16 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().recvmsg(socket, message, flags);
     }
 
+    public int truncate(CharSequence path, long length) {
+        return libc().truncate(path, length);
+    }
+
     public int ftruncate(int fd, long offset) {
         return libc().ftruncate(fd, offset);
+    }
+
+    public int rename(CharSequence oldName, CharSequence newName) {
+        return libc().rename(oldName, newName);
     }
 
     public String getcwd() {
@@ -692,4 +792,49 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         }
     };
 
+    public int mkfifo(String filename, int mode) {
+        return ((UnixLibC) libc()).mkfifo(filename, mode);
+    }
+
+    public int daemon(int nochdir, int noclose) {
+        return libc().daemon(nochdir, noclose);
+    }
+
+    @Override
+    public long[] getgroups() {
+        final int size = getgroups(0, null);
+        final int[] groups = new int[size];
+        final long[] castGroups = new long[size];
+
+        final int actualSize = getgroups(size, groups);
+
+        if (actualSize == -1) {
+            return null;
+        }
+
+        for (int i = 0; i < actualSize; i++) {
+            castGroups[i] = groups[i] & 0xFFFFFFFFL;
+        }
+
+        if (actualSize < size) {
+            return Arrays.copyOfRange(castGroups, 0, actualSize);
+        }
+
+        return castGroups;
+    }
+
+    @Override
+    public int getgroups(int size, int[] groups) {
+        return libc().getgroups(size, groups);
+    }
+
+    @Override
+    public String nl_langinfo(int item) {
+        return libc().nl_langinfo(item);
+    }
+
+    @Override
+    public String strerror(int code) {
+        return libc().strerror(code);
+    }
 }

@@ -173,11 +173,11 @@ public class POSIXFactory {
                 return new String[] { "libc.so.6", "crypt" };
             
             case SOLARIS:
-                return new String[] { "socket", "nsl", "c" };
+                return new String[] { "socket", "nsl", jnr.ffi.Platform.getNativePlatform().getStandardCLibraryName() };
 
             case FREEBSD:
             case NETBSD:
-                return new String[] { "c", "crypt" };
+                return new String[] { jnr.ffi.Platform.getNativePlatform().getStandardCLibraryName(), "crypt" };
             
             case AIX:
                 return jnr.ffi.Runtime.getSystemRuntime().addressSize() == 4
@@ -188,7 +188,7 @@ public class POSIXFactory {
                 return new String[] { "msvcrt", "kernel32" };
             
             default:
-                return new String[] { "c" };
+                return new String[] { jnr.ffi.Platform.getNativePlatform().getStandardCLibraryName() };
         }
     }
     
@@ -234,6 +234,14 @@ public class POSIXFactory {
                         .map("read", "_read")
                         .map("write", "_write")
                         .map("close", "_close")
+                        .map("getcwd", "_getcwd")
+                        .map("unlink", "_unlink")
+                        .map("access", "_access")
+                        .map("open", "_open")
+                        .map("dup", "_dup")
+                        .map("dup2", "_dup2")
+                        .map("lseek", "_lseek")
+                        .map("ftruncate", "_chsize")
                         .build();
             
             case SOLARIS:

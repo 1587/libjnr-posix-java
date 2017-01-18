@@ -3,6 +3,7 @@ package jnr.posix;
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Pointer;
 import jnr.posix.util.Java5ProcessMaker;
 import jnr.posix.util.MethodName;
 import jnr.posix.util.Platform;
@@ -200,7 +201,13 @@ final class JavaPOSIX implements POSIX {
     public int endgrent() {
         return unimplementedInt("endgrent");
     }
-    
+
+    public Pointer environ() {
+        handler.unimplementedError("environ");
+
+        return null;
+    }
+
     // @see setenv for more on the environment methods
     public String getenv(String envName) {
         return helper.getEnv().get(envName);
@@ -209,7 +216,33 @@ final class JavaPOSIX implements POSIX {
     public int getuid() {
         return LoginInfo.UID;
     }
-    
+
+    public int getrlimit(int resource, RLimit rlim) {
+        return unimplementedInt("getrlimit");
+    }
+
+    public int getrlimit(int resource, Pointer rlim) {
+        return unimplementedInt("getrlimit");
+    }
+
+    public RLimit getrlimit(int resource) {
+        handler.unimplementedError("getrlimit");
+
+        return null;
+    }
+
+    public int setrlimit(int resource, RLimit rlim) {
+        return unimplementedInt("setrlimit");
+    }
+
+    public int setrlimit(int resource, Pointer rlim) {
+        return unimplementedInt("setrlimit");
+    }
+
+    public int setrlimit(int resource, long rlimCur, long rlimMax) {
+        return unimplementedInt("setrlimit");
+    }
+
     public int fork() {
         return -1;
     }
@@ -223,7 +256,11 @@ final class JavaPOSIX implements POSIX {
     public int kill(int pid, int signal) {
         return unimplementedInt("kill");    // FIXME: Can be implemented
     }
-    
+
+    public int kill(long pid, int signal) {
+        return unimplementedInt("kill");    // FIXME: Can be implemented
+    }
+
     private static class SunMiscSignalHandler implements sun.misc.SignalHandler {
         final SignalHandler handler;
         public SunMiscSignalHandler(SignalHandler handler) {
@@ -290,7 +327,25 @@ final class JavaPOSIX implements POSIX {
         buffer.limit(result);
         return Charset.forName("ASCII").decode(buffer).toString();
     }
-    
+
+    public int readlink(CharSequence path, byte[] buf, int bufsize) {
+        handler.unimplementedError("readlink");
+
+        return -1;
+    }
+
+    public int readlink(CharSequence path, ByteBuffer buf, int bufsize) {
+        handler.unimplementedError("readlink");
+
+        return -1;
+    }
+
+    public int readlink(CharSequence path, Pointer bufPtr, int bufsize) {
+        handler.unimplementedError("readlink");
+
+        return -1;
+    }
+
     // At this point the environment is not being used by any methods here.
     // getenv/setenv/unsetenv do behave properly via POSIX definitions, but 
     // it is only a storage facility at the moment.  In a future release, this
@@ -386,11 +441,20 @@ final class JavaPOSIX implements POSIX {
         return 0;
     }
 
+    public int utimes(String path, Pointer times) {
+        return unimplementedInt("utimes");
+    }
+
     public int futimes(int fd, long[] atimeval, long[] mtimeval) {
         handler.unimplementedError("futimes");
         return unimplementedInt("futimes");
     }
-    
+
+    public int lutimes(String path, long[] atimeval, long[] mtimeval) {
+        handler.unimplementedError("lutimes");
+        return unimplementedInt("lutimes");
+    }
+
     public int wait(int[] status) {
         return unimplementedInt("wait");
     }
@@ -443,7 +507,7 @@ final class JavaPOSIX implements POSIX {
 
     private int unimplementedInt(String message) {
         handler.unimplementedError(message);
-        
+
         return -1;
     }
 
@@ -463,7 +527,7 @@ final class JavaPOSIX implements POSIX {
     }
     
     public int flock(int fd, int mode) {
-        return unimplementedInt("waitpid");
+        return unimplementedInt("flock");
     }
 
     public int dup(int fd) {
@@ -486,6 +550,12 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("fcntl");
     }
 
+    public int access(CharSequence path, int amode) {
+        handler.unimplementedError("access");
+
+        return -1;
+    }
+
     public int close(int fd) {
         return unimplementedInt("close");
     }
@@ -502,48 +572,83 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
-    public int read(int fd, byte[] buf, int n) {
+
+    public long read(int fd, byte[] buf, long n) {
         handler.unimplementedError("read");
 
         return -1;
     }
-
-    public int write(int fd, byte[] buf, int n) {
+    public long write(int fd, byte[] buf, long n) {
         handler.unimplementedError("write");
 
         return -1;
     }
-
-    public int read(int fd, ByteBuffer buf, int n) {
+    public long read(int fd, ByteBuffer buf, long n) {
         handler.unimplementedError("read");
 
         return -1;
     }
-
-    public int write(int fd, ByteBuffer buf, int n) {
+    public long write(int fd, ByteBuffer buf, long n) {
         handler.unimplementedError("write");
 
         return -1;
     }
-
-    public int pread(int fd, byte[] buf, int n, int offset) {
+    public long pread(int fd, byte[] buf, long n, long offset) {
         handler.unimplementedError("pread");
 
         return -1;
     }
+    public long pwrite(int fd, byte[] buf, long n, long offset) {
+        handler.unimplementedError("pwrite");
 
-    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        return -1;
+    }
+    public long pread(int fd, ByteBuffer buf, long n, long offset) {
+        handler.unimplementedError("pread");
+
+        return -1;
+    }
+    public long pwrite(int fd, ByteBuffer buf, long n, long offset) {
         handler.unimplementedError("pwrite");
 
         return -1;
     }
 
+    public int read(int fd, byte[] buf, int n) {
+        handler.unimplementedError("read");
+
+        return -1;
+    }
+    public int write(int fd, byte[] buf, int n) {
+        handler.unimplementedError("write");
+
+        return -1;
+    }
+    public int read(int fd, ByteBuffer buf, int n) {
+        handler.unimplementedError("read");
+
+        return -1;
+    }
+    public int write(int fd, ByteBuffer buf, int n) {
+        handler.unimplementedError("write");
+
+        return -1;
+    }
+    public int pread(int fd, byte[] buf, int n, int offset) {
+        handler.unimplementedError("pread");
+
+        return -1;
+    }
+    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        handler.unimplementedError("pwrite");
+
+        return -1;
+    }
     public int pread(int fd, ByteBuffer buf, int n, int offset) {
         handler.unimplementedError("pread");
 
         return -1;
     }
-
     public int pwrite(int fd, ByteBuffer buf, int n, int offset) {
         handler.unimplementedError("pwrite");
 
@@ -551,6 +656,12 @@ final class JavaPOSIX implements POSIX {
     }
 
     public int lseek(int fd, long offset, int whence) {
+        handler.unimplementedError("lseek");
+
+        return -1;
+    }
+
+    public long lseekLong(int fd, long offset, int whence) {
         handler.unimplementedError("lseek");
 
         return -1;
@@ -580,8 +691,27 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
+    public int truncate(CharSequence path, long length) {
+        handler.unimplementedError("truncate");
+
+        return -1;
+    }
+
     public int ftruncate(int fd, long offset) {
         handler.unimplementedError("ftruncate");
+
+        return -1;
+    }
+
+    public int rename(CharSequence oldName, CharSequence newName) {
+        // Very basic support.  This might not work well with rename's semantics regarding symlinks.
+
+        File oldFile = new File(oldName.toString());
+        File newFile = new File(newName.toString());
+
+        if (oldFile.renameTo(newFile)) {
+            return 0;
+        }
 
         return -1;
     }
@@ -598,6 +728,37 @@ final class JavaPOSIX implements POSIX {
     public int fdatasync(int fd) {
         handler.unimplementedError("fdatasync");
         return unimplementedInt("fdatasync not available for Java");
+    }
+
+    public int mkfifo(String filename, int mode) {
+        handler.unimplementedError("mkfifo");
+        return unimplementedInt("mkfifo not available for Java");
+    }
+
+    public int daemon(int nochdir, int noclose) {
+        handler.unimplementedError("daemon");
+        return unimplementedInt("daemon not available for Java");
+    }
+
+    public long[] getgroups() {
+        handler.unimplementedError("getgroups");
+        return null;
+    }
+
+    public int getgroups(int size, int[] groups) {
+        handler.unimplementedError("getgroups");
+        return unimplementedInt("getgroups not available for Java");
+    }
+
+    public String nl_langinfo(int item) {
+        handler.unimplementedError("nl_langinfo");
+        return null;
+    }
+
+    @Override
+    public String strerror(int code) {
+        handler.unimplementedError("strerror");
+        return null;
     }
 
     static final class LoginInfo {

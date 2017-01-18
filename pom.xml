@@ -10,7 +10,7 @@
   <groupId>com.github.jnr</groupId>
   <artifactId>jnr-posix</artifactId>
   <packaging>jar</packaging>
-  <version>3.0.12</version>
+  <version>3.0.33</version>
   <name>jnr-posix</name>
   <description>
     Common cross-project/cross-platform POSIX APIs
@@ -74,12 +74,12 @@
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-ffi</artifactId>
-      <version>2.0.3</version>
+      <version>2.1.1</version>
     </dependency>
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-constants</artifactId>
-      <version>0.8.7</version>
+      <version>0.9.6</version>
     </dependency>
   </dependencies>
 
@@ -93,22 +93,42 @@
     </extensions>
     <plugins>
       <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.3.7</version>
+        <configuration>
+          <instructions>
+            <Implementation-Title>JNA-POSIX</Implementation-Title>
+            <Implementation-Version>0.5</Implementation-Version>
+            <_nouses>true</_nouses>
+            <Import-Package>!sun.misc,*</Import-Package>
+          </instructions>
+        </configuration>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.3.1</version>
         <configuration>
           <archive>
-            <manifestFile>MANIFEST.MF</manifestFile>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
           </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.16</version>
-        <configuration>
-          <forkCount>2</forkCount>
-          <reuseForks>false</reuseForks>
-          <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
         </configuration>
       </plugin>
       <plugin>
@@ -124,6 +144,62 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>non-windows-unit-tests</id>
+      <activation><os><family>!windows</family></os></activation>
+      <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.18.1</version>
+          <configuration>
+            <forkCount>2</forkCount>
+            <reuseForks>false</reuseForks>
+            <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+            <includes>
+              <include>**/*Test.java</include>
+            </includes>
+            <excludes>
+              <exclude>**/windows/*Test.java</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>windows-unit-tests</id>
+      <activation><os><family>windows</family></os></activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.18.1</version>
+            <configuration>
+              <forkCount>2</forkCount>
+              <reuseForks>false</reuseForks>
+              <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
