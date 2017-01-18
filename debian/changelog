@@ -10,6 +10,7 @@ jnr-posix (3.0.33-1) UNRELEASED; urgency=medium
   * Switch Vcs-Git URL to https.
   * Add get-orig-source target to d/rules.
   * Switch d/copyright file to 1.0 format.
+  * Delete obsolete README.Debian files.
 
  -- Miguel Landaeta <nomadium@debian.org>  Wed, 18 Jan 2017 21:22:59 +0000
 
