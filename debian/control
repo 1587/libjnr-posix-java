@@ -4,7 +4,8 @@ Priority: optional
 Maintainer: Debian Java Maintainers <pkg-java-maintainers@lists.alioth.debian.org>
 Uploaders: Damien Raude-Morvan <drazzib@debian.org>,
            Jakub Adam <jakub.adam@ktknet.cz>,
-           Tim Potter <tpot@hp.com>
+           Tim Potter <tpot@hp.com>,
+           Miguel Landaeta <nomadium@debian.org>
 Build-Depends: debhelper (>= 9),
  default-jdk,
  javahelper,

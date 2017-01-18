@@ -1,6 +1,7 @@
 jnr-posix (3.0.33-1) UNRELEASED; urgency=medium
 
   * New upstream release. (Closes: #851323)
+  * Add myself as uploader.
 
  -- Miguel Landaeta <nomadium@debian.org>  Wed, 18 Jan 2017 21:22:59 +0000
 
