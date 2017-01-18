@@ -2,6 +2,7 @@ package jnr.posix;
 
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Pointer;
 import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
@@ -10,7 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 import jnr.constants.platform.Signal;
 
-public interface  POSIX {
+public interface POSIX {
     CharSequence crypt(CharSequence key, CharSequence salt);
 
     /**
@@ -46,6 +47,7 @@ public interface  POSIX {
     FileStat fstat(int descriptor);
     int fstat(FileDescriptor descriptor, FileStat stat);
     int fstat(int fd, FileStat stat);
+    Pointer environ();
     String getenv(String envName);
     int getegid();
     int geteuid();
@@ -70,8 +72,15 @@ public interface  POSIX {
     int endpwent();
     int setpwent();
     int getuid();
+    int getrlimit(int resource, RLimit rlim);
+    int getrlimit(int resource, Pointer rlim);
+    RLimit getrlimit(int resource);
+    int setrlimit(int resource, RLimit rlim);
+    int setrlimit(int resource, Pointer rlim);
+    int setrlimit(int resource, long rlimCur, long rlimMax);
     boolean isatty(FileDescriptor descriptor);
     int kill(int pid, int signal);
+    int kill(long pid, int signal);
     SignalHandler signal(Signal sig, SignalHandler handler);
     int lchmod(String filename, int mode);
     int lchown(String filename, int user, int group);
@@ -80,6 +89,9 @@ public interface  POSIX {
     int lstat(String path, FileStat stat);
     int mkdir(String path, int mode);
     String readlink(String path) throws IOException;
+    int readlink(CharSequence path, byte[] buf, int bufsize);
+    int readlink(CharSequence path, ByteBuffer buf, int bufsize);
+    int readlink(CharSequence path, Pointer bufPtr, int bufsize);
     int rmdir(String path);
     int setenv(String envName, String envValue, int overwrite); // 0 no !0 yes
     int setsid();
@@ -95,12 +107,15 @@ public interface  POSIX {
     int umask(int mask);
     int unsetenv(String envName);
     int utimes(String path, long[] atimeval, long[] mtimeval);
+    int utimes(String path, Pointer times);
     int futimes(int fd, long[] atimeval, long[] mtimeval);
+    int lutimes(String path, long[] atimeval, long[] mtimeval);
     int waitpid(int pid, int[] status, int flags);
     int waitpid(long pid, int[] status, int flags);
     int wait(int[] status);
     int errno();
     void errno(int value);
+    String strerror(int code);
     int chdir(String path);
     boolean isNative();
     /** Returns null if isNative returns false. */
@@ -126,20 +141,35 @@ public interface  POSIX {
 
     int fcntlInt(int fd, Fcntl fcntlConst, int arg);
     int fcntl(int fd, Fcntl fcntlConst);
+    int access(CharSequence path, int amode);
     int close(int fd);
     int unlink(CharSequence path);
     int open(CharSequence path, int flags, int perm);
-    int write(int fd, byte[] buf, int n);
+
+    long read(int fd, byte[] buf, long n);
+    long write(int fd, byte[] buf, long n);
+    long read(int fd, ByteBuffer buf, long n);
+    long write(int fd, ByteBuffer buf, long n);
+    long pread(int fd, byte[] buf, long n, long offset);
+    long pwrite(int fd, byte[] buf, long n, long offset);
+    long pread(int fd, ByteBuffer buf, long n, long offset);
+    long pwrite(int fd, ByteBuffer buf, long n, long offset);
+
     int read(int fd, byte[] buf, int n);
-    int pwrite(int fd, byte[] buf, int n, int offset);
-    int pread(int fd, byte[] buf, int n, int offset);
-    int write(int fd, ByteBuffer buf, int n);
+    int write(int fd, byte[] buf, int n);
     int read(int fd, ByteBuffer buf, int n);
-    int pwrite(int fd, ByteBuffer buf, int n, int offset);
+    int write(int fd, ByteBuffer buf, int n);
+    int pread(int fd, byte[] buf, int n, int offset);
+    int pwrite(int fd, byte[] buf, int n, int offset);
     int pread(int fd, ByteBuffer buf, int n, int offset);
+    int pwrite(int fd, ByteBuffer buf, int n, int offset);
+
     int lseek(int fd, long offset, int whence);
+    long lseekLong(int fd, long offset, int whence);
     int pipe(int[] fds);
+    int truncate(CharSequence path, long length);
     int ftruncate(int fd, long offset);
+    int rename(CharSequence oldName, CharSequence newName);
     String getcwd();
 
     int socketpair(int domain, int type, int protocol, int[] fds);
@@ -157,4 +187,12 @@ public interface  POSIX {
     int fcntl(int fd, Fcntl fcntlConst, int... arg);
     int fsync(int fd);
     int fdatasync(int fd);
+    int mkfifo(String filename, int mode);
+
+    int daemon(int nochdir, int noclose);
+
+    long[] getgroups();
+    int getgroups(int size, int[] groups);
+
+    String nl_langinfo(int item);
 }

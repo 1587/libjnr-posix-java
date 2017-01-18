@@ -1,6 +1,7 @@
 package jnr.posix;
 
 import jnr.ffi.Pointer;
+import jnr.ffi.Variable;
 import jnr.ffi.annotations.In;
 import jnr.ffi.annotations.Out;
 import jnr.ffi.annotations.StdCall;
@@ -8,6 +9,10 @@ import jnr.ffi.annotations.Transient;
 import jnr.ffi.byref.IntByReference;
 
 import java.nio.ByteBuffer;
+import jnr.posix.windows.SystemTime;
+import jnr.posix.windows.WindowsByHandleFileInformation;
+import jnr.posix.windows.WindowsFileInformation;
+import jnr.posix.windows.WindowsFindData;
 
 public interface WindowsLibC extends LibC {
     public static final int STD_INPUT_HANDLE = -10;
@@ -26,6 +31,7 @@ public interface WindowsLibC extends LibC {
     public static final int FILE_TYPE_UNKNOWN = 0x0000;
     
     public int _open_osfhandle(HANDLE handle, int flags);
+    public HANDLE _get_osfhandle(int fd);
     public int _close(int fd);
     public int _getpid();
     int _stat64(CharSequence path, @Out @Transient FileStat stat);
@@ -37,6 +43,8 @@ public interface WindowsLibC extends LibC {
     public int _wchmod(@In WString path, int pmode);
     public int _wchdir(@In WString path);
     public int _wstat64(@In WString path, @Out @Transient FileStat stat);
+    public int _wstat64(@In byte[] path, @Out @Transient FileStat stat);
+    public int _pipe(int[] fds, int psize, int textmode);
     
     @StdCall
     public boolean CreateProcessW(byte[] applicationName, 
@@ -50,8 +58,16 @@ public interface WindowsLibC extends LibC {
                                  WindowsStartupInfo startupInfo,
                                  WindowsProcessInformation processInformation);
 
+    public int FileTimeToSystemTime(@In FileTime fileTime, @Out @Transient SystemTime systemTime);
     public int GetFileAttributesW(@In WString path);
+    public int GetFileAttributesExW(@In WString path, @In int infoLevel, @Out @Transient WindowsFileInformation fileInformation);
+    public int GetFileAttributesExW(@In byte[] path, @In int infoLevel, @Out @Transient WindowsFileInformation fileInformation);
     public int SetFileAttributesW(@In WString path, int flags);
+    public int GetFileInformationByHandle(@In HANDLE handle, @Out @Transient WindowsByHandleFileInformation fileInformation);
+
+    public int FindClose(HANDLE handle);
+    public HANDLE FindFirstFileW(@In WString wpath, @Out WindowsFindData findData);
+    public HANDLE FindFirstFileW(@In byte[] wpath, @Out WindowsFindData findData);
     
     @StdCall
     public boolean GetExitCodeProcess(HANDLE handle, @Out Pointer exitCode);
@@ -100,4 +116,6 @@ public interface WindowsLibC extends LibC {
     
     @StdCall
     int WaitForSingleObject(HANDLE handle, int milliseconds);
+
+    Variable<Long> _environ();
 }

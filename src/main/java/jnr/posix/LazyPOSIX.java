@@ -3,6 +3,7 @@ package jnr.posix;
 
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Pointer;
 import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
@@ -205,11 +206,39 @@ final class LazyPOSIX implements POSIX {
         return posix().getuid();
     }
 
+    public int getrlimit(int resource, RLimit rlim) {
+        return posix().getrlimit(resource, rlim);
+    }
+
+    public int getrlimit(int resource, Pointer rlim) {
+        return posix().getrlimit(resource, rlim);
+    }
+
+    public RLimit getrlimit(int resource) {
+        return posix().getrlimit(resource);
+    }
+
+    public int setrlimit(int resource, RLimit rlim) {
+        return posix().setrlimit(resource, rlim);
+    }
+
+    public int setrlimit(int resource, Pointer rlim) {
+        return posix().setrlimit(resource, rlim);
+    }
+
+    public int setrlimit(int resource, long rlimCur, long rlimMax) {
+        return posix().setrlimit(resource, rlimCur, rlimMax);
+    }
+
     public boolean isatty(FileDescriptor descriptor) {
         return posix().isatty(descriptor);
     }
 
     public int kill(int pid, int signal) {
+        return kill((long) pid, signal);
+    }
+
+    public int kill(long pid, int signal) {
         return posix().kill(pid, signal);
     }
     
@@ -243,6 +272,18 @@ final class LazyPOSIX implements POSIX {
 
     public String readlink(String path) throws IOException {
         return posix().readlink(path);
+    }
+
+    public int readlink(CharSequence path, byte[] buf, int bufsize) {
+        return posix().readlink(path, buf, bufsize);
+    }
+
+    public int readlink(CharSequence path, ByteBuffer buf, int bufsize) {
+        return posix().readlink(path, buf, bufsize);
+    }
+
+    public int readlink(CharSequence path, Pointer bufPtr, int bufsize) {
+        return posix().readlink(path, bufPtr, bufsize);
     }
 
     public int rmdir(String path) {
@@ -309,8 +350,16 @@ final class LazyPOSIX implements POSIX {
         return posix().utimes(path, atimeval, mtimeval);
     }
 
+    public int utimes(String path, Pointer times) {
+        return posix().utimes(path, times);
+    }
+
     public int futimes(int fd, long[] atimeval, long[] mtimeval) {
         return posix().futimes(fd, atimeval, mtimeval);
+    }
+
+    public int lutimes(String path, long[] atimeval, long[] mtimeval) {
+        return posix().lutimes(path, atimeval, mtimeval);
     }
 
     public int wait(int[] status) {
@@ -331,6 +380,10 @@ final class LazyPOSIX implements POSIX {
 
     public LibC libc() {
         return posix().libc();
+    }
+
+    public Pointer environ() {
+        return posix().environ();
     }
 
     public String getenv(String envName) {
@@ -387,6 +440,10 @@ final class LazyPOSIX implements POSIX {
         return posix().fcntl(fd, fcntlConst);
     }
 
+    public int access(CharSequence path, int amode) {
+        return posix().access(path, amode);
+    }
+
     public int close(int fd) {
         return posix().close(fd);
     }
@@ -399,40 +456,63 @@ final class LazyPOSIX implements POSIX {
         return posix().open(path, flags, perm);
     }
 
-    public int write(int fd, byte[] buf, int n) {
-        return posix().write(fd, buf, n);
-    }
-
-    public int read(int fd, byte[] buf, int n) {
+    public long read(int fd, byte[] buf, long n) {
         return posix().read(fd, buf, n);
     }
-
-    public int read(int fd, ByteBuffer buf, int n) {
-        return posix().read(fd, buf, n);
-    }
-
-    public int write(int fd, ByteBuffer buf, int n) {
+    public long write(int fd, byte[] buf, long n) {
         return posix().write(fd, buf, n);
     }
-
-    public int pread(int fd, byte[] buf, int n, int offset) {
+    public long read(int fd, ByteBuffer buf, long n) {
+        return posix().read(fd, buf, n);
+    }
+    public long write(int fd, ByteBuffer buf, long n) {
+        return posix().write(fd, buf, n);
+    }
+    public long pread(int fd, byte[] buf, long n, long offset) {
         return posix().pread(fd, buf, n, offset);
     }
-
-    public int pwrite(int fd, byte[] buf, int n, int offset) {
+    public long pwrite(int fd, byte[] buf, long n, long offset) {
+        return posix().pwrite(fd, buf, n, offset);
+    }
+    public long pread(int fd, ByteBuffer buf, long n, long offset) {
+        return posix().pread(fd, buf, n, offset);
+    }
+    public long pwrite(int fd, ByteBuffer buf, long n, long offset) {
         return posix().pwrite(fd, buf, n, offset);
     }
 
+    public int read(int fd, byte[] buf, int n)
+    {
+        return posix().read(fd, buf, n);
+    }
+    public int write(int fd, byte[] buf, int n) {
+        return posix().write(fd, buf, n);
+    }
+    public int read(int fd, ByteBuffer buf, int n) {
+        return posix().read(fd, buf, n);
+    }
+    public int write(int fd, ByteBuffer buf, int n) {
+        return posix().write(fd, buf, n);
+    }
+    public int pread(int fd, byte[] buf, int n, int offset) {
+        return posix().pread(fd, buf, n, offset);
+    }
+    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        return posix().pwrite(fd, buf, n, offset);
+    }
     public int pread(int fd, ByteBuffer buf, int n, int offset) {
         return posix().pread(fd, buf, n, offset);
     }
-
     public int pwrite(int fd, ByteBuffer buf, int n, int offset) {
         return posix().pwrite(fd, buf, n, offset);
     }
 
     public int lseek(int fd, long offset, int whence) {
         return posix().lseek(fd, offset, whence);
+    }
+
+    public long lseekLong(int fd, long offset, int whence) {
+        return posix().lseekLong(fd, offset, whence);
     }
 
     public int pipe(int[] fds) {
@@ -444,15 +524,23 @@ final class LazyPOSIX implements POSIX {
     }
 
     public int sendmsg(int socket, MsgHdr message, int flags) {
-        return posix().sendmsg( socket, message, flags );
+        return posix().sendmsg(socket, message, flags);
     }
 
     public int recvmsg(int socket, MsgHdr message, int flags) {
-        return posix().recvmsg( socket, message, flags );
+        return posix().recvmsg(socket, message, flags);
+    }
+
+    public int truncate(CharSequence path, long length) {
+        return posix().truncate(path, length);
     }
 
     public int ftruncate(int fd, long offset) {
         return posix().ftruncate(fd, offset);
+    }
+
+    public int rename(CharSequence oldName, CharSequence newName) {
+        return posix().rename(oldName, newName);
     }
 
     public String getcwd() {
@@ -465,5 +553,30 @@ final class LazyPOSIX implements POSIX {
 
     public int fdatasync(int fd) {
         return posix().fdatasync(fd);
+    }
+
+    public int mkfifo(String path, int mode) {
+        return posix().mkfifo(path, mode);
+    }
+
+    public int daemon(int nochdir, int noclose) {
+        return posix().daemon(nochdir, noclose);
+    }
+
+    public long[] getgroups() {
+        return posix().getgroups();
+    }
+
+    public int getgroups(int size, int[] groups) {
+        return posix().getgroups(size, groups);
+    }
+
+    public String nl_langinfo(int item) {
+        return posix().nl_langinfo(item);
+    }
+
+    @Override
+    public String strerror(int code) {
+        return posix().strerror(code);
     }
 }

@@ -1,8 +1,12 @@
 package jnr.posix;
 
+import jnr.constants.platform.OpenFlags;
+import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Errno;
 import static jnr.constants.platform.Errno.*;
 import static jnr.constants.platform.windows.LastError.*;
+
+import jnr.ffi.LastError;
 import jnr.ffi.Pointer;
 import jnr.ffi.byref.IntByReference;
 import jnr.ffi.mapper.FromNativeContext;
@@ -13,9 +17,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jnr.posix.util.MethodName;
+import jnr.posix.util.Platform;
 import jnr.posix.util.WindowsHelpers;
+import jnr.posix.windows.CommonFileInformation;
+import jnr.posix.windows.WindowsByHandleFileInformation;
+import jnr.posix.windows.WindowsFileInformation;
+import jnr.posix.windows.WindowsFindData;
 
-final class WindowsPOSIX extends BaseNativePOSIX {
+final public class WindowsPOSIX extends BaseNativePOSIX {
     private final static int FILE_TYPE_CHAR = 0x0002;
 
     private final static Map<Integer, Errno> errorToErrnoMapper
@@ -117,13 +126,16 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         errorToErrnoMapper.put(WSAEMFILE.value(), EMFILE);
     }
 
+    private final FileStat checkFdStat;
+
     WindowsPOSIX(LibCProvider libc, POSIXHandler handler) {
         super(libc, handler);
+        this.checkFdStat = new WindowsFileStat(this);
     }
     
     @Override
     public FileStat allocateStat() {
-        return new WindowsFileStat(this);
+        return new WindowsRawFileStat(this, handler);
     }
 
     public MsgHdr allocateMsgHdr() {
@@ -138,6 +150,13 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int kill(int pid, int signal) {
+        handler.unimplementedError("kill");
+
+        return -1;
+    }
+
+    @Override
+    public int kill(long pid, int signal) {
         handler.unimplementedError("kill");
 
         return -1;
@@ -206,13 +225,6 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public int geteuid() {
         return 0;
-    }
-    
-    @Override
-    public String getenv(String envName) {
-        handler.unimplementedError("getenv");
-        
-        return null;
     }
 
     @Override
@@ -304,15 +316,21 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         
         return -1;
     }
+
+    public FileStat fstat(int fd) {
+        WindowsFileStat stat = new WindowsFileStat(this);
+        if (fstat(fd, stat) < 0) handler.error(Errno.valueOf(errno()), "fstat", "" + fd);
+        return stat;
+    }
     
     @Override
     public int fstat(FileDescriptor fileDescriptor, FileStat stat) {
-        int fd = ((WindowsLibC) libc())._open_osfhandle(helper.gethandle(fileDescriptor), 0);
-        try {
-            return libc().fstat(fd, stat);
-        } finally {
-            ((WindowsLibC) libc())._close(fd);
-        }
+        WindowsByHandleFileInformation info = new WindowsByHandleFileInformation(getRuntime());
+        if (wlibc().GetFileInformationByHandle(JavaLibCHelper.gethandle(fileDescriptor), info) == 0) return -1;
+
+        ((WindowsRawFileStat) stat).setup(info);
+
+        return 0;
     }
     
     @Override
@@ -327,7 +345,37 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int stat(String path, FileStat stat) {
-        return wlibc()._wstat64(new WString(path), stat);
+        WindowsFileInformation info = new WindowsFileInformation(getRuntime());
+        byte[] wpath = WString.path(path, true);
+
+        if (wlibc().GetFileAttributesExW(wpath, 0, info) != 0) {
+            ((WindowsRawFileStat) stat).setup(path, info);
+        } else {
+            int e = errno();
+
+            if (e == ERROR_FILE_NOT_FOUND.intValue() || e == ERROR_PATH_NOT_FOUND.intValue()
+                    || e == ERROR_BAD_NETPATH.intValue()) {
+                return -1;
+            }
+
+            return findFirstFile(path, stat);
+        }
+
+        return 0;
+    }
+
+    // Public so we can test this via unit-testing.  This makes me wish we had a whole different interface for
+    // windows APIs user32/kernel32 that this class could consume easily.  We are clearly missing an abstraction
+    // or project here.
+    public int findFirstFile(String path, FileStat stat) {
+        byte[] wpath = WString.path(path, true);
+        WindowsFindData findData = new WindowsFindData(getRuntime());
+        HANDLE handle = wlibc().FindFirstFileW(wpath, findData);
+        if (!handle.isValid()) return -1;
+        wlibc().FindClose(handle);
+        ((WindowsRawFileStat) stat).setup(path, findData);
+
+        return 0;
     }
 
     @Override
@@ -336,7 +384,12 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
         return null;
     }
-    
+
+    @Override
+    public Pointer environ() {
+        return getRuntime().getMemoryManager().newPointer(wlibc()._environ().get());
+    }
+
     @Override
     public int setenv(String envName, String envValue, int overwrite) {
         if (envName.contains("=")) {
@@ -415,13 +468,14 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         return timeSet ? 0 : -1;
     }
 
-    private FileTime unixTimeToFileTime(long unixTime) {
+    private FileTime unixTimeToFileTime(long unixTimeSeconds) {
         // FILETIME is a 64-bit unsigned integer representing
         // the number of 100-nanosecond intervals since January 1, 1601
         // UNIX timestamp is number of seconds since January 1, 1970
-        // 116444736000000000 = 10000000 * 60 * 60 * 24 * 365 * 369 + 89 leap days
-        long ft = (unixTime + 11644473600L) * 10000000L;
+        // 116444736000000000 = 10_000_000 * 60 * 60 * 24 * 365 * 369 + 89 leap days
+        long ft = (unixTimeSeconds + 11644473600L) * 10000000L;
 
+        //long ft = CommonFileInformation.asNanoSeconds(unixTimeSeconds);
         FileTime fileTime = new FileTime(getRuntime());
         fileTime.dwLowDateTime.set(ft & 0xFFFFFFFFL);
         fileTime.dwHighDateTime.set((ft >> 32) & 0xFFFFFFFFL);
@@ -506,7 +560,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public boolean isatty(FileDescriptor fd) {
-        HANDLE handle = helper.gethandle(fd);
+        HANDLE handle = JavaLibCHelper.gethandle(fd);
 
         int type = wlibc().GetFileType(handle);
         return type == FILE_TYPE_CHAR;
@@ -590,6 +644,71 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         return childResult(createProcess("aspawn", cmds[0], cmds[1], null, null, null, null, envp), overlay);
         } catch (Exception e) {
             return -1;
+        }
+    }
+
+    public int pipe(int[] fds) {
+        // TODO (nirvdrum 06-May-15) Maybe not hard-code the psize value. But figure out a sensible way to handle textmode.
+        return ((WindowsLibC) libc())._pipe(fds, 512, 0);
+    }
+
+    public int truncate(CharSequence path, long length) {
+        // Windows doesn't have a native truncate() equivalent, but it does have a native ftruncate() equivalent.
+        // In order to call the ftruncate() equivalent, we must convert a path to a FD.  We do that by wrapping the
+        // ftruncate() call with open() and close().
+
+        // Permissions are ignored since we're not using O_CREAT.
+        int fd = libc().open(path, OpenFlags.O_WRONLY.intValue(), 0);
+        if (fd == -1) {
+            return -1;
+        }
+
+        if (libc().ftruncate(fd, length) == -1) {
+            return -1;
+        }
+
+        if (libc().close(fd) == -1) {
+            return -1;
+        }
+
+        // truncate() returns 0 on success.
+        return 0;
+    }
+
+    public int fcntlInt(int fd, Fcntl fcntl, int arg) {
+        switch(fcntl) {
+            case F_GETFD: {
+                if (checkFd(fd) == -1) {
+                    return -1;
+                } else {
+                    // This is a gigantic hack.  Indicate that Windows does not support close-on-exec.
+                    return 0;
+                }
+            }
+
+            case F_SETFD: {
+                if (checkFd(fd) == -1) {
+                    return -1;
+                } else {
+                    // This is a gigantic hack.  Indicate that Windows does not support close-on-exec by no-oping.
+                    return 0;
+                }
+            }
+
+            case F_GETFL: {
+                if (checkFd(fd) == -1) {
+                    return -1;
+                } else {
+                    // TODO (nirvdrum 06-May-15): Look up the actual flags rather than optimistically hard-coding this set.
+                    return OpenFlags.O_RDWR.intValue();
+                }
+            }
+
+            default: {
+                handler.unimplementedError("fcntl");
+
+                return -1;
+            }
         }
     }
     
@@ -684,9 +803,22 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         return new WindowsChildRecord(processInformation.getProcess(), processInformation.getPid());
     }
 
+    private int checkFd(int fd) {
+        // There might be a lighter-weight check, but we basically want to
+        // make sure the FD is valid and the effective user can access it,
+        // since we need to simulate fcntl semantics.
+        return libc().fstat(fd, checkFdStat);
+    }
+
     public static final PointerConverter PASSWD = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
             throw new RuntimeException("no support for native passwd");
         }
     };
+
+    public int mkfifo(String filename, int mode) {
+        handler.unimplementedError("mkfifo");
+
+        return -1;
+    }
 }

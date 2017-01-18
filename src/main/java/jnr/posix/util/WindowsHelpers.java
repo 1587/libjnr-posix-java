@@ -22,11 +22,6 @@ public class WindowsHelpers {
     static final int WORDSIZE = jnr.ffi.Runtime.getSystemRuntime().addressSize();
     
     public static byte[] toWPath(String path) {
-        boolean absolute = new File(path).isAbsolute();
-        if (absolute) {
-            path = "//?/" + path;
-        }
-
         return toWString(path);
     }
 
@@ -208,7 +203,7 @@ public class WindowsHelpers {
                 } else {
                     if (!shell.contains(" ")) quote = 0;
                     
-                    shell.replace('/', '\\');
+                    shell = shell.replace('/', '\\');
                 }
             }                
         }
@@ -418,6 +413,10 @@ public class WindowsHelpers {
         InternalType kindOf = INTERNAL_COMMANDS.get(buf.toString());
         return kindOf == InternalType.BOTH || 
                 (hasCommandDotCom ? kindOf == InternalType.COMMAND : kindOf == InternalType.SHELL);
+    }
+
+    public static boolean isDriveLetterPath(String path) {
+        return path.length() >= 2 && Character.isLetter(path.charAt(0)) && path.charAt(1) == ':';
     }
         
 }
