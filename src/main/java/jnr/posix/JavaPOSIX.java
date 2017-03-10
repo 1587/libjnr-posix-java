@@ -253,6 +253,12 @@ final class JavaPOSIX implements POSIX {
                 || fd == FileDescriptor.err);
     }
 
+    public int isatty(int fd) {
+        return (fd == 0
+                || fd == 1
+                || fd == 2) ? 1 : 0;
+    }
+
     public int kill(int pid, int signal) {
         return unimplementedInt("kill");    // FIXME: Can be implemented
     }
@@ -755,10 +761,26 @@ final class JavaPOSIX implements POSIX {
         return null;
     }
 
+    public String setlocale(int category, String locale) {
+        handler.unimplementedError("setlocale");
+        return null;
+    }
+
     @Override
     public String strerror(int code) {
         handler.unimplementedError("strerror");
         return null;
+    }
+
+    public Timeval allocateTimeval() {
+        handler.unimplementedError("allocateTimeval");
+        return null;
+    }
+
+    @Override
+    public int gettimeofday(Timeval tv) {
+        handler.unimplementedError("gettimeofday");
+        return -1;
     }
 
     static final class LoginInfo {

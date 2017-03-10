@@ -234,6 +234,10 @@ final class LazyPOSIX implements POSIX {
         return posix().isatty(descriptor);
     }
 
+    public int isatty(int descriptor) {
+        return posix().isatty(descriptor);
+    }
+
     public int kill(int pid, int signal) {
         return kill((long) pid, signal);
     }
@@ -575,8 +579,18 @@ final class LazyPOSIX implements POSIX {
         return posix().nl_langinfo(item);
     }
 
+    public String setlocale(int category, String locale) {
+        return posix().setlocale(category, locale);
+    }
+
     @Override
     public String strerror(int code) {
         return posix().strerror(code);
     }
+
+    @Override
+    public Timeval allocateTimeval() { return posix().allocateTimeval(); }
+
+    @Override
+    public int gettimeofday(Timeval tv) { return posix().gettimeofday(tv); }
 }
