@@ -475,7 +475,11 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public boolean isatty(FileDescriptor fd) {
-       return libc().isatty(helper.getfd(fd)) != 0;
+       return isatty(helper.getfd(fd)) != 0;
+    }
+
+    public int isatty(int fd) {
+        return libc().isatty(fd);
     }
 
     public int errno() {
@@ -834,7 +838,18 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     @Override
+    public String setlocale(int category, String locale) {
+        return libc().setlocale(category, locale);
+    }
+
+    @Override
     public String strerror(int code) {
         return libc().strerror(code);
     }
+
+    @Override
+    public Timeval allocateTimeval() { return new DefaultNativeTimeval(getRuntime()); }
+
+    @Override
+    public int gettimeofday(Timeval tv) { return libc().gettimeofday(tv, 0); }
 }

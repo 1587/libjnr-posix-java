@@ -79,6 +79,7 @@ public interface POSIX {
     int setrlimit(int resource, Pointer rlim);
     int setrlimit(int resource, long rlimCur, long rlimMax);
     boolean isatty(FileDescriptor descriptor);
+    int isatty(int descriptor);
     int kill(int pid, int signal);
     int kill(long pid, int signal);
     SignalHandler signal(Signal sig, SignalHandler handler);
@@ -195,4 +196,8 @@ public interface POSIX {
     int getgroups(int size, int[] groups);
 
     String nl_langinfo(int item);
+    String setlocale(int category, String locale);
+
+    Timeval allocateTimeval();
+    int gettimeofday(Timeval tv);
 }
