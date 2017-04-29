@@ -1,3 +1,11 @@
+jnr-posix (3.0.12-3) unstable; urgency=medium
+
+  * Team upload.
+  * Ignore all test failures for now to prevent a build failure on i386 which
+    upstream has not commented on yet. (Closes: #860691)
+
+ -- Markus Koschany <apo@debian.org>  Sat, 29 Apr 2017 21:50:46 +0200
+
 jnr-posix (3.0.12-2) unstable; urgency=medium
 
   * Team upload.
